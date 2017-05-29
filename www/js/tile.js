@@ -56,11 +56,4 @@ Tile.prototype.setBorder = function(frame) {
 
 Tile.prototype.setFilling = function(state) {
     this.isFilled = state;
-    //this.floorContainer.getChildAt(0).frame = (this.isFilled ? 1 : 0);
-};
-
-Tile.prototype.generateCorners = function() {
-    if (this.isFilled) {
-        //this.bordersContainer.getChildAt(0).alpha = 1;
-    }
 };

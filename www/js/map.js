@@ -1,8 +1,9 @@
-function Map(game, width, height) {
+function Map(game, config) {
     Phaser.Group.call(this, game);
 
-    this.gridWidth = width;
-    this.gridHeight = height;
+    this.config = config;
+    this.gridWidth = config.mapWidth;
+    this.gridHeight = config.mapHeight;
 
     this.tiles = [];
 
@@ -29,9 +30,6 @@ Map.prototype.createMap = function() {
         let rows = [];
         for (let gridX=0; gridX<this.gridWidth + 2; gridX++) {
             let tile = new Tile(this.game);
-            if (gridY % 2) {
-                tile.alpha = 0.95
-            }
             tile.x = gridX * tile.width;
             tile.y = gridY * tile.height;
             tile.gridX = gridX;
@@ -47,6 +45,10 @@ Map.prototype.createMap = function() {
         }
         this.tiles.push(rows);
     }
+
+    this.config.labels.forEach(function(label) {
+        this.tiles[label.gridY+1][label.gridX+1].setLabel(label.label);
+    }, this);
 
     this.refreshTiles();
 };

@@ -7,11 +7,8 @@ function Tile(game) {
     this.bordersContainer = this.game.add.group();
     this.add(this.bordersContainer);
 
-    this.cornersGroundContainer = this.game.add.group();
-    this.add(this.cornersGroundContainer);
-
-    this.cornersWaterContainer = this.game.add.group();
-    this.add(this.cornersWaterContainer);
+    this.labelContainer = this.game.add.group();
+    this.add(this.labelContainer);
 
     this.onClicked = new Phaser.Signal();
 
@@ -57,12 +54,25 @@ Tile.prototype.reset = function() {
 };
 
 Tile.prototype.setBorder = function(frame) {
-    this.bordersContainer.getChildAt(0).frame = frame;
-    this.bordersContainer.getChildAt(0).alpha = 0.5;
+    if (this.background.inputEnabled) {
+        this.bordersContainer.getChildAt(0).frame = frame;
+        this.bordersContainer.getChildAt(0).alpha = 1;
+    } else {
+        this.bordersContainer.getChildAt(0).frame = frame;
+        this.bordersContainer.getChildAt(0).alpha = 0.5;
+    }
 };
 
 Tile.prototype.setFilling = function(state) {
     this.isFilled = state;
+};
+
+Tile.prototype.setLabel = function(label) {
+    let text = this.game.add.bitmapText(0, 0, 'font:guiOutline', label, 20);
+    text.anchor.set(0.5, 0.5);
+    text.x = this.background.width/2;
+    text.y = this.background.height/2;
+    this.labelContainer.addChild(text);
 };
 
 /* Events */

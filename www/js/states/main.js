@@ -17,9 +17,17 @@ GAME.Main.prototype = {
     /* Misc methods */
 
     createMap: function() {
-        let mapWidth = 6;
-        let mapHeight = 6;
-        let map = new Map(this.game, mapWidth, mapHeight);
+        let mapConfig = {
+            mapWidth: 5,
+            mapHeight: 5,
+            labels: [
+                {gridX:1, gridY:0, label:4},
+                {gridX:3, gridY:0, label:5},
+                {gridX:2, gridY:2, label:1},
+                {gridX:0, gridY:3, label:4}
+            ]
+        };
+        let map = new Map(this.game, mapConfig);
         this.mapContainer.addChild(map);
     }
 };

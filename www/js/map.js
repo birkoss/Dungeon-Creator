@@ -89,91 +89,48 @@ Map.prototype.refreshTile = function(gridX, gridY) {
         }
 
         let frame = 0
-        switch (total) {
-            /* Corners TL, TR, BR, BL */
-            case 80:
-                frame = 8;
-                break;
-            case 72:
-            case 104:
-            case 200:
-            case 232:
-            case 233:
-                frame = 9;
-                break;
-            case 10:
-                frame = 11;
-                break;
-            case 18:
-            case 22:
-                frame = 10;
-                break;
-            /* T-Shapes */
-            case 88:
-            case 249:
-                frame = 13;
-                break;
-            case 74:
-            case 235:
-                frame = 14;
-                break;
-            case 26:
-            case 27:
-            case 30:
-            case 31:
-                frame = 17;
-                break;
-            case 82:
-            case 210:
-            case 214:
-                frame = 16;
-                break;
-            /* 1 connection */
-            case 39:
-                frame = 7;
-                break;
-            case 148:
-                frame = 1;
-                break;
-            case 41:
-                frame = 3;
-                break;
-            case 224:
-                frame = 5;
-                break;
+
+        let positions = [
             /* + Shape */
-            case 90:
-            case 251:
-                frame = 12;
-                break;
-            /* Surrounded */
-            case 255:
-                frame = 12;
-                break;
-            default:
+            {value: [2, 8, 16, 64], frame: 12},
 
-                console.log(gridX + "x" + gridY + " = " + total);
+            /* T Shapes */
+            {value: [8, 16, 2], frame: 17},
+            {value: [8, 16, 64], frame: 13},
+            {value: [2, 64, 8], frame: 14},
+            {value: [2, 64, 16], frame: 16},
 
-                /* Horizontal */
-                if (total & 8 && total & 16) {
-                    /* Check for y-1 OR y+1 */
-                    frame = 2;
-                } else if (total & 8) {
-                    frame = 3;
-                } else if (total & 16) {
-                    frame = 1;
+            /* Simple line */
+            {value: [8, 16], frame: 2},
+            {value: [2, 64], frame: 6},
+
+            /* Corners */
+            {value: [8, 64], frame: 9},
+            {value: [64, 16], frame: 8},
+            {value: [8, 2], frame: 11},
+            {value: [2, 16], frame: 10},
+
+            /* Dead end */
+            {value: [8], frame: 3},
+            {value: [16], frame: 1},
+            {value: [2], frame: 7},
+            {value: [64], frame: 5}
+        ];
+
+        for (let i=0; i<positions.length; i++) {
+            let ok = true;
+            positions[i].value.forEach(function(val) {
+                if ( !(total & val) ) {
+                    ok = false;
                 }
-                
-                /* Vertical */
-                if (total & 2 && total & 64) {
-                    /* Check for x-1 OR x+1 */
-                    frame = 6;
-                } else if (total & 2) {
-                    frame = 7;
-                } else if (total & 64) {
-                    frame = 5;
-                }
+            }, this);
+
+            if (ok) {
+                frame = positions[i].frame;
+                break;
+            }
         }
+
         tile.setBorder(frame);
     }
 };

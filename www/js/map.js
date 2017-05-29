@@ -38,25 +38,15 @@ Map.prototype.createMap = function() {
             tile.gridY = gridY;
             if (gridX == 0 || gridY == 0 || gridX == (this.gridWidth+1) || gridY == (this.gridHeight+1)) {
                 tile.setFilling(1);
+            } else {
+                tile.enableClick();
+                tile.onClicked.add(this.onTileClicked, this);
             }
             rows.push(tile);
             this.tilesContainer.addChild(tile);
         }
         this.tiles.push(rows);
     }
-
-    this.tiles[2][2].setFilling(1);
-
-    this.tiles[1][5].setFilling(1);
-    this.tiles[2][4].setFilling(1);
-    this.tiles[2][5].setFilling(1);
-    this.tiles[3][5].setFilling(1);
-    this.tiles[2][6].setFilling(1);
-
-    this.tiles[4][6].setFilling(1);
-    this.tiles[6][4].setFilling(1);
-    this.tiles[4][1].setFilling(1);
-    this.tiles[1][3].setFilling(1);
 
     this.refreshTiles();
 };
@@ -72,6 +62,11 @@ Map.prototype.refreshTiles = function() {
 };
 
 Map.prototype.refreshTile = function(gridX, gridY) {
+    /* Out of bounds */
+    if (gridX < 0 && gridY < 0 && gridX >= this.gridWidth + 1 && gridY >= this.gridHeight + 1) {
+        return;
+    }
+
     let tile = this.tiles[gridY][gridX];
 
     tile.reset();
@@ -100,25 +95,37 @@ Map.prototype.refreshTile = function(gridX, gridY) {
                 frame = 8;
                 break;
             case 72:
+            case 104:
+            case 200:
+            case 232:
+            case 233:
                 frame = 9;
                 break;
             case 10:
                 frame = 11;
                 break;
             case 18:
+            case 22:
                 frame = 10;
                 break;
             /* T-Shapes */
             case 88:
+            case 249:
                 frame = 13;
                 break;
             case 74:
+            case 235:
                 frame = 14;
                 break;
             case 26:
+            case 27:
+            case 30:
+            case 31:
                 frame = 17;
                 break;
             case 82:
+            case 210:
+            case 214:
                 frame = 16;
                 break;
             /* 1 connection */
@@ -136,13 +143,20 @@ Map.prototype.refreshTile = function(gridX, gridY) {
                 break;
             /* + Shape */
             case 90:
+            case 251:
+                frame = 12;
+                break;
+            /* Surrounded */
+            case 255:
                 frame = 12;
                 break;
             default:
-                /* Last connection */
 
-                /* Horizontal & vertical */
+                console.log(gridX + "x" + gridY + " = " + total);
+
+                /* Horizontal */
                 if (total & 8 && total & 16) {
+                    /* Check for y-1 OR y+1 */
                     frame = 2;
                 } else if (total & 8) {
                     frame = 3;
@@ -150,7 +164,9 @@ Map.prototype.refreshTile = function(gridX, gridY) {
                     frame = 1;
                 }
                 
+                /* Vertical */
                 if (total & 2 && total & 64) {
+                    /* Check for x-1 OR x+1 */
                     frame = 6;
                 } else if (total & 2) {
                     frame = 7;
@@ -167,4 +183,16 @@ Map.prototype.isTileFilled = function(gridX, gridY) {
         return false;
     }
     return this.tiles[gridY][gridX].isFilled;
+};
+
+/* Events */
+
+Map.prototype.onTileClicked = function(tile, pointer) {
+    tile.setFilling(tile.isFilled ^= 1);
+
+    for (let y=-1; y<=1; y++) {
+        for (let x=-1; x<=1; x++) {
+            this.refreshTile(tile.gridX + x, tile.gridY + y);
+        }
+    }
 };

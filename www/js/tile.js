@@ -13,6 +13,8 @@ function Tile(game) {
     this.cornersWaterContainer = this.game.add.group();
     this.add(this.cornersWaterContainer);
 
+    this.onClicked = new Phaser.Signal();
+
     this.init();
 };
 
@@ -34,14 +36,19 @@ Tile.prototype.createTile = function(spriteName, frame) {
     return tile;
 };
 
-Tile.prototype.init = function() {
-    let tile = this.createTile("map:ground", 0);
-    if (this.game.rnd.integerInRange(0, 5) == 2) {
-        tile.frame = 1;
-    }
-    this.floorContainer.addChild(tile);
+Tile.prototype.enableClick = function() {
+    this.background.inputEnabled = true;
+    this.background.events.onInputDown.add(this.onBackgroundClicked, this);
+};
 
-    tile = this.createTile("map:borders", 0);
+Tile.prototype.init = function() {
+    this.background = this.createTile("map:ground", 0);
+    if (this.game.rnd.integerInRange(0, 5) == 2) {
+        this.background.frame = 1;
+    }
+    this.floorContainer.addChild(this.background);
+
+    let tile = this.createTile("map:borders", 0);
     this.bordersContainer.add(tile);
 };
 
@@ -56,4 +63,10 @@ Tile.prototype.setBorder = function(frame) {
 
 Tile.prototype.setFilling = function(state) {
     this.isFilled = state;
+};
+
+/* Events */
+
+Tile.prototype.onBackgroundClicked = function(tile, pointer) {
+    this.onClicked.dispatch(this);
 };

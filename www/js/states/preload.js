@@ -10,6 +10,7 @@ GAME.Preload.prototype = {
 
         this.load.spritesheet('map:borders', 'images/tiles/borders/dungeon.png', 24, 24);
         this.load.spritesheet('map:ground', 'images/tiles/ground/dungeon.png', 24, 24);
+        this.load.spritesheet('map:lava', 'images/tiles/borders/lava.png', 24, 24);
         this.load.spritesheet('map:corners-water', 'images/tiles/corners-water.png', 16, 16);
         this.load.spritesheet('map:floors', 'images/tiles/floors.png', 16, 16);
 

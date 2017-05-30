@@ -26,22 +26,38 @@ Map.prototype = Object.create(Phaser.Group.prototype);
 Map.prototype.constructor = Map;
 
 Map.prototype.createMap = function() {
-    for (let gridY=0; gridY<this.gridHeight; gridY++) {
+    for (let gridY=0; gridY<this.gridHeight + 2; gridY++) {
         let rows = [];
-        for (let gridX=0; gridX<this.gridWidth; gridX++) {
+        for (let gridX=0; gridX<this.gridWidth + 2; gridX++) {
             let tile = new Tile(this.game);
             tile.x = gridX * tile.width;
             tile.y = gridY * tile.height;
             tile.gridX = gridX;
             tile.gridY = gridY;
-            /*
             if (gridX == 0 || gridY == 0 || gridX == (this.gridWidth+1) || gridY == (this.gridHeight+1)) {
-                tile.setFilling(1);
+                if (gridX == 0) {
+                    if (gridY == 0) {
+                        tile.setBorder(8);
+                    } else if (gridY == this.gridHeight + 1) {
+                        tile.setBorder(10);
+                    } else {
+                        tile.setBorder(6);
+                    }
+                } else if (gridX == this.gridWidth + 1) {
+                    if (gridY == 0) {
+                        tile.setBorder(9);
+                    } else if (gridY == this.gridHeight + 1) {
+                        tile.setBorder(11);
+                    } else {
+                        tile.setBorder(6);
+                    }
+                } else if (gridY == 0 || gridY == this.gridHeight + 1) {
+                    tile.setBorder(2);
+                }
             } else {
-            */
                 tile.enableClick();
                 tile.onClicked.add(this.onTileClicked, this);
-            //}
+            }
             rows.push(tile);
             this.tilesContainer.addChild(tile);
         }
@@ -49,7 +65,7 @@ Map.prototype.createMap = function() {
     }
 
     this.config.labels.forEach(function(label) {
-        this.tiles[label.gridY][label.gridX].setLabel(label.label);
+        this.tiles[label.gridY+1][label.gridX+1].setLabel(label.label);
     }, this);
 
     this.refreshTiles();
@@ -58,8 +74,8 @@ Map.prototype.createMap = function() {
 /* Helpers */
 
 Map.prototype.refreshTiles = function() {
-    for (let gridY=0; gridY<this.gridHeight; gridY++) {
-        for (let gridX=0; gridX<this.gridWidth; gridX++) {
+    for (let gridY=1; gridY<this.gridHeight+1; gridY++) {
+        for (let gridX=1; gridX<this.gridWidth+1; gridX++) {
             this.refreshTile(gridX, gridY);
         }
     }
@@ -67,7 +83,7 @@ Map.prototype.refreshTiles = function() {
 
 Map.prototype.refreshTile = function(gridX, gridY) {
     /* Out of bounds */
-    if (gridX < 0 || gridY < 0 || gridX >= this.gridWidth || gridY >= this.gridHeight) {
+    if (gridX < 1 || gridY < 1 || gridX >= this.gridWidth + 1 || gridY >= this.gridHeight + 1) {
         return;
     }
 
@@ -135,12 +151,14 @@ Map.prototype.refreshTile = function(gridX, gridY) {
             }
         }
 
-        tile.setBorder(frame);
+        console.log(total);
+
+        tile.setBorder(frame, "lava");
     }
 };
 
 Map.prototype.isTileFilled = function(gridX, gridY) {
-    if (gridX < 0 || gridY < 0 || gridX >= this.gridWidth || gridY >= this.gridHeight) {
+    if (gridX < 1 || gridY < 1 || gridX > this.gridWidth || gridY > this.gridHeight) {
         return false;
     }
     return this.tiles[gridY][gridX].isFilled;

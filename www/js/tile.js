@@ -45,26 +45,24 @@ Tile.prototype.init = function() {
     }
     this.floorContainer.addChild(this.background);
 
-    let tile = this.createTile("map:borders", 0);
-    this.bordersContainer.add(tile);
 };
 
 Tile.prototype.reset = function() {
-    this.bordersContainer.getChildAt(0).alpha = 0;
+    this.bordersContainer.removeAll();
 };
 
-Tile.prototype.setBorder = function(frame) {
-    if (this.background.inputEnabled) {
-        this.bordersContainer.getChildAt(0).frame = frame;
-        this.bordersContainer.getChildAt(0).alpha = 1;
-    } else {
-        this.bordersContainer.getChildAt(0).frame = frame;
-        this.bordersContainer.getChildAt(0).alpha = 0.5;
+Tile.prototype.setBorder = function(frame, spriteSheet) {
+    if (spriteSheet == undefined) {
+        spriteSheet = "borders";
     }
+    let tile = this.createTile("map:" + spriteSheet, 0);
+    tile.frame = frame;
+    this.bordersContainer.add(tile);
 };
 
 Tile.prototype.setFilling = function(state) {
     this.isFilled = state;
+    this.background.frame = (this.isFilled ? 2 : 0);
 };
 
 Tile.prototype.setLabel = function(label) {

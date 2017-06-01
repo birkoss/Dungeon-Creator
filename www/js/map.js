@@ -37,24 +37,27 @@ Map.prototype.createMap = function() {
             if (gridX == 0 || gridY == 0 || gridX == (this.gridWidth+1) || gridY == (this.gridHeight+1)) {
                 if (gridX == 0) {
                     if (gridY == 0) {
-                        tile.setBorder(8);
+                        tile.setBorder(0);
                     } else if (gridY == this.gridHeight + 1) {
-                        tile.setBorder(10);
-                    } else {
                         tile.setBorder(6);
+                    } else {
+                        tile.setBorder(3);
                     }
                 } else if (gridX == this.gridWidth + 1) {
                     if (gridY == 0) {
-                        tile.setBorder(9);
+                        tile.setBorder(2);
                     } else if (gridY == this.gridHeight + 1) {
-                        tile.setBorder(11);
+                        tile.setBorder(8);
                     } else {
-                        tile.setBorder(6);
+                        tile.setBorder(5);
                     }
-                } else if (gridY == 0 || gridY == this.gridHeight + 1) {
-                    tile.setBorder(2);
+                } else if (gridY == 0) {
+                    tile.setBorder(1);
+                } else if (gridY == this.gridHeight + 1) {
+                    tile.setBorder(7);
                 }
             } else {
+                tile.setDecor();
                 tile.enableClick();
                 tile.onClicked.add(this.onTileClicked, this);
             }
@@ -164,14 +167,30 @@ Map.prototype.isTileFilled = function(gridX, gridY) {
     return this.tiles[gridY][gridX].isFilled;
 };
 
+Map.prototype.getNeighboors = function(neighboors, gridX, gridY) {
+    if (gridX > 0 && gridX < this.gridWidth + 1 && gridY > 0 && gridY < this.gridHeight + 1) {
+        let tile = this.tiles[gridY][gridX];
+        if (!tile.isFilled && neighboors.indexOf(tile) == -1) {
+            neighboors.push(tile);
+            for (let y=-1; y<=1; y++) {
+                for (let x=-1; x<=1; x++) {
+                    if (Math.abs(x) != Math.abs(y)) {
+                        this.getNeighboors(neighboors, gridX+x, gridY+y);
+                    }
+                }
+            }
+        }
+    }
+};
+
 /* Events */
 
 Map.prototype.onTileClicked = function(tile, pointer) {
     tile.setFilling(tile.isFilled ^= 1);
 
-    for (let y=-1; y<=1; y++) {
-        for (let x=-1; x<=1; x++) {
-            this.refreshTile(tile.gridX + x, tile.gridY + y);
-        }
-    }
+    this.config.labels.forEach(function(label) {
+        let neighboors = [];
+        this.getNeighboors(neighboors, label.gridX + 1, label.gridY + 1);
+        this.tiles[label.gridY+1][label.gridX+1].text.alpha = (neighboors.length == label.label ? 0.8 : 1);
+    }, this);
 };

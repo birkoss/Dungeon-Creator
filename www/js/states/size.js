@@ -14,7 +14,7 @@ GAME.Size.prototype = {
 
         /* Buttons */
         for (let puzzleSize in GAME.json['puzzles']) {
-            let button = this.selector.addButton(puzzleSize, this.onSizeButtonClicked, this, "btnGreen");
+            let button = this.selector.addButton(puzzleSize, this.onSizeButtonClicked, this, "btnYellow");
             button.puzzleSize = puzzleSize;
         }
         let button = this.selector.addButton("Back", this.onBackButtonClicked, this, "btnRed");

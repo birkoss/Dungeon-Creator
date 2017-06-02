@@ -1,14 +1,13 @@
 var GAME = GAME || {};
 
-GAME.Game = function() {};
+GAME.Main = function() {};
 
-GAME.Game.prototype = {
+GAME.Main.prototype = {
     create: function() {
-        this.lives = 3;
-        this.coins = 0;
-
         this.mapContainer = this.game.add.group();
         this.buttonsContainer = this.game.add.group();
+
+        this.panelContainer = this.game.add.group();
 
         this.createMap();
     },
@@ -18,22 +17,17 @@ GAME.Game.prototype = {
     /* Misc methods */
 
     createMap: function() {
-        this.map = new Map(this.game, 6, 6);
-        this.map.onHitTaken.add(this.onMapHitTaken, this);
-        this.map.onCoinsTaken.add(this.onMapCoinsTaken, this);
-
-        let mapSize = (this.map.width) / GAME.scale.sprite;
-        mapSize += 4;
-        let background = this.game.add.tileSprite(0, 0, mapSize, mapSize, "tile:stone");
-        background.scale.setTo(GAME.scale.sprite, GAME.scale.sprite);
-
-        this.mapContainer.addChild(background);
-        this.mapContainer.addChild(this.map);
-
-        this.map.x = (this.mapContainer.width - this.map.width)/2;
-        this.map.y = (this.mapContainer.height - this.map.height)/2;
-
-        this.mapContainer.x = (this.game.width - this.mapContainer.width)/2;
-        this.mapContainer.y = (this.game.height - this.mapContainer.height)/2;
+        let mapConfig = {
+            mapWidth: 5,
+            mapHeight: 5,
+            labels: [
+                {gridX:1, gridY:0, label:4},
+                {gridX:3, gridY:0, label:5},
+                {gridX:2, gridY:2, label:1},
+                {gridX:0, gridY:3, label:4}
+            ]
+        };
+        let map = new Map(this.game, mapConfig);
+        this.mapContainer.addChild(map);
     }
 };

@@ -17,10 +17,28 @@ GAME.Preload.prototype = {
         this.load.spritesheet('map:floors', 'images/tiles/floors.png', 16, 16);
         this.load.spritesheet('map:tiles', 'images/tiles/tiles.png', 64, 64);
 
+        this.load.spritesheet('ninepatch:background', 'images/gui/panel.png', 8, 8);
+        this.load.spritesheet('ninepatch:blue', 'images/gui/title.png', 8, 8);
+        this.load.spritesheet('gui:btnLevel', 'images/gui/buttons/level.png', 49, 49);
+        this.load.spritesheet('gui:btnLevelLocked', 'images/gui/buttons/level-locked.png', 49, 49);
+        this.load.image('gui:btnClose', 'images/gui/buttons/close.png');
+        this.load.image('icon:close', 'images/gui/buttons/closeIcon.png');
+        this.load.spritesheet('gui:btnChangePage', 'images/gui/buttons/changePage.png', 36, 36);
+        this.load.image('icon:changePage', 'images/gui/buttons/changePageIcon.png');
+        this.load.spritesheet('gui:btnGreen', 'images/gui/buttons/green.png', 190, 49);
+        this.load.spritesheet('gui:btnYellow', 'images/gui/buttons/yellow.png', 190, 49);
+        this.load.image('gui:btnGrey', 'images/gui/buttons/grey.png');
+        this.load.spritesheet('gui:btnRed', 'images/gui/buttons/red.png', 190, 49);
+
+        this.load.json('data:puzzles', 'data/puzzles.json');
+
         this.load.bitmapFont('font:guiOutline', 'fonts/guiOutline.png', 'fonts/guiOutline.xml');
         this.load.bitmapFont('font:gui', 'fonts/gui.png', 'fonts/gui.xml');
     },
     create: function() {
-        this.state.start('Main'); /* Game/Debug */
+        GAME.json = {};
+        GAME.json['puzzles'] = this.cache.getJSON('data:puzzles');
+
+        this.state.start('Main');
     }
 };

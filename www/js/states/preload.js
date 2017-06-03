@@ -39,6 +39,6 @@ GAME.Preload.prototype = {
         GAME.json = {};
         GAME.json['puzzles'] = this.cache.getJSON('data:puzzles');
 
-        this.state.start('Level');
+        this.state.start('Game');
     }
 };

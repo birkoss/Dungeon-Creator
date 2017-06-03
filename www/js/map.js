@@ -66,20 +66,62 @@ Map.prototype.createMap = function() {
 
 /* Helpers */
 
-Map.prototype.getNeighboors = function(neighboors, gridX, gridY) {
+Map.prototype.completeMap = function() {
+    for (let gridY = 1; gridY<this.gridHeight+1; gridY++) {
+        for (let gridX = 1; gridX<this.gridWidth+1; gridX++) {
+            if (this.tiles[gridY][gridX].isFilled) {
+                this.game.add.tween(this.tiles[gridY][gridX].decor.scale).to({x:0, y:0}, 800).start();
+                let tween = this.game.add.tween(this.tiles[gridY][gridX]).to({alpha: 0}, 800).start();
+                tween.onComplete.add(this.mapCleaned, this);
+                tween.start();
+            }
+        }
+    }
+};
+
+Map.prototype.getNeighboors = function(neighboors, gridX, gridY, tileState) {
+    if (tileState == undefined) {
+        tileState = 0;
+    }
     if (gridX > 0 && gridX < this.gridWidth + 1 && gridY > 0 && gridY < this.gridHeight + 1) {
         let tile = this.tiles[gridY][gridX];
-        if (!tile.isFilled && neighboors.indexOf(tile) == -1) {
+        if (tile.isFilled == tileState && neighboors.indexOf(tile) == -1) {
             neighboors.push(tile);
             for (let y=-1; y<=1; y++) {
                 for (let x=-1; x<=1; x++) {
                     if (Math.abs(x) != Math.abs(y)) {
-                        this.getNeighboors(neighboors, gridX+x, gridY+y);
+                        this.getNeighboors(neighboors, gridX+x, gridY+y, tileState);
                     }
                 }
             }
         }
     }
+};
+
+Map.prototype.containsSquare = function() {
+    let newX = 0;
+    let newY = 0;
+    for (let gridY = 1; gridY<this.gridHeight; gridY++) {
+        for (let gridX = 1; gridX<this.gridWidth; gridX++) {
+            let total = 0;
+            for (let y=0; y<=1; y++) {
+                for (let x=0; x<=1; x++) {
+                    newX = gridX + x;
+                    newY = gridY + y;
+                    
+                    if (this.tiles[newY][newX].isFilled) {
+                        total++;
+                    }
+                }
+            }
+
+            if (total >= 4) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 };
 
 /* Events */
@@ -92,10 +134,47 @@ Map.prototype.onTileConfirmed = function(tile, pointer) {
     if (this.selectedTile == tile) {
         tile.setFilling(tile.isFilled ^= 1);
 
+        this.completeMap();
+
+        let islandCompleted = true;
+        let totalIslandTiles = 0;
         this.config.labels.forEach(function(label) {
             let neighboors = [];
             this.getNeighboors(neighboors, label.gridX + 1, label.gridY + 1);
-            this.tiles[label.gridY+1][label.gridX+1].text.alpha = (neighboors.length == label.label ? 0.8 : 1);
+            this.tiles[label.gridY+1][label.gridX+1].text.alpha = (neighboors.length == label.label ? 0.5 : 1);
+            if (neighboors.length != label.label) {
+                islandCompleted = false;
+            }
+            totalIslandTiles += label.label;
         }, this);
+
+        /* If all islands are completed, check if the road is OK */
+        if (islandCompleted) {
+            let emptyTile = null;
+            for (let y=1; y<this.gridHeight+1; y++) {
+                for (let x=1; x<this.gridWidth+1; x++) {
+                    if (this.tiles[y][x].isFilled == 1 && emptyTile == null) {
+                        emptyTile = this.tiles[y][x];
+                    }
+                }
+            }
+
+            /* If at least one tile was found... */
+            if (emptyTile != null) {
+                let neighboors = [];
+                this.getNeighboors(neighboors, emptyTile.gridX, emptyTile.gridY, 1);
+                if (neighboors.length == (this.gridWidth * this.gridHeight) - totalIslandTiles && !this.containsSquare()) {
+                    this.completeMap();
+                }
+            }
+        }
+    }
+};
+
+Map.prototype.mapCleaned = function() {
+    let totalTweens = this.game.tweens.getAll().length;
+
+    if (totalTweens <= 1) {
+        console.log("SHOW OVER...!");
     }
 };

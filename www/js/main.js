@@ -3,7 +3,7 @@
  */
 var GAME = GAME || {};
 
-GAME.config = {puzzleSize:"10x10"};
+GAME.config = {puzzleSize:"5x5", puzzleID:1};
 
 GAME.config.puzzles = {'5x5':[1], '10x10':[1]};
 

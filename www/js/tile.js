@@ -1,6 +1,8 @@
 function Tile(game) {
     Phaser.Group.call(this, game);
 
+    this.isFilled = -1;
+
     this.onSelected = new Phaser.Signal();
     this.onConfirmed = new Phaser.Signal();
 };
@@ -33,6 +35,7 @@ Tile.prototype.enableClick = function() {
 
 Tile.prototype.setDecor = function() {
     this.decor = this.createTile("tile:ground", 6);
+    this.isFilled = 0;
     this.addChild(this.decor);
 };
 

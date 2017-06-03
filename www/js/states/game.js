@@ -11,8 +11,6 @@ GAME.Game.prototype = {
 
         this.createMap();
     },
-    update: function() {
-    },
 
     /* Misc methods */
 

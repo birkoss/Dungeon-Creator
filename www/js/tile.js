@@ -7,7 +7,8 @@ function Tile(game) {
     this.labelContainer = this.game.add.group();
     this.add(this.labelContainer);
 
-    this.onClicked = new Phaser.Signal();
+    this.onSelected = new Phaser.Signal();
+    this.onConfirmed = new Phaser.Signal();
 
     this.init();
 };
@@ -36,7 +37,8 @@ Tile.prototype.createTile = function(spriteName, frame) {
 
 Tile.prototype.enableClick = function() {
     this.background.inputEnabled = true;
-    this.background.events.onInputDown.add(this.onBackgroundClicked, this);
+    this.background.events.onInputDown.add(this.onBackgroundInputDown, this);
+    this.background.events.onInputUp.add(this.onBackgroundInputUp, this);
 };
 
 Tile.prototype.init = function() {
@@ -79,6 +81,10 @@ Tile.prototype.setLabel = function(label) {
 
 /* Events */
 
-Tile.prototype.onBackgroundClicked = function(tile, pointer) {
-    this.onClicked.dispatch(this);
+Tile.prototype.onBackgroundInputDown = function(tile, pointer) {
+    this.onSelected.dispatch(this);
+};
+
+Tile.prototype.onBackgroundInputUp = function(tile, pointer) {
+    this.onConfirmed.dispatch(this);
 };

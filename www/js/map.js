@@ -59,7 +59,8 @@ Map.prototype.createMap = function() {
             } else {
                 tile.setDecor();
                 tile.enableClick();
-                tile.onClicked.add(this.onTileClicked, this);
+                tile.onSelected.add(this.onTileSelected, this);
+                tile.onConfirmed.add(this.onTileConfirmed, this);
             }
             rows.push(tile);
             this.tilesContainer.addChild(tile);
@@ -185,12 +186,18 @@ Map.prototype.getNeighboors = function(neighboors, gridX, gridY) {
 
 /* Events */
 
-Map.prototype.onTileClicked = function(tile, pointer) {
-    tile.setFilling(tile.isFilled ^= 1);
+Map.prototype.onTileSelected = function(tile, pointer) {
+    this.selectedTile = tile;
+};
 
-    this.config.labels.forEach(function(label) {
-        let neighboors = [];
-        this.getNeighboors(neighboors, label.gridX + 1, label.gridY + 1);
-        this.tiles[label.gridY+1][label.gridX+1].text.alpha = (neighboors.length == label.label ? 0.8 : 1);
-    }, this);
+Map.prototype.onTileConfirmed = function(tile, pointer) {
+    if (this.selectedTile == tile) {
+        tile.setFilling(tile.isFilled ^= 1);
+
+        this.config.labels.forEach(function(label) {
+            let neighboors = [];
+            this.getNeighboors(neighboors, label.gridX + 1, label.gridY + 1);
+            this.tiles[label.gridY+1][label.gridX+1].text.alpha = (neighboors.length == label.label ? 0.8 : 1);
+        }, this);
+    }
 };

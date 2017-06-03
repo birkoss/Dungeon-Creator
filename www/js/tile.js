@@ -24,10 +24,6 @@ Tile.prototype.createTile = function(spriteName, frame) {
     if (frame != null) {
         tile.frame = frame;
     }
-/*
-    this.width = 32;
-    this.height = 32;
-    */
 
     tile.x += tile.width/2;
     tile.y += tile.height/2;
@@ -36,14 +32,16 @@ Tile.prototype.createTile = function(spriteName, frame) {
 };
 
 Tile.prototype.enableClick = function() {
-    this.background.inputEnabled = true;
-    this.background.events.onInputDown.add(this.onBackgroundInputDown, this);
-    this.background.events.onInputUp.add(this.onBackgroundInputUp, this);
+    if (this.decor != undefined) {
+        this.decor.inputEnabled = true;
+        this.decor.events.onInputDown.add(this.onBackgroundInputDown, this);
+        this.decor.events.onInputUp.add(this.onBackgroundInputUp, this);
+    }
 };
 
 Tile.prototype.init = function() {
-    this.background = this.createTile("tile:ground", 0);
-    this.floorContainer.addChild(this.background);
+    //jthis.background = this.createTile("tile:ground", 0);
+    //jthis.floorContainer.addChild(this.background);
 };
 
 Tile.prototype.setDecor = function() {
@@ -55,9 +53,6 @@ Tile.prototype.reset = function() {
 };
 
 Tile.prototype.setBorder = function(frame) {
-    this.background.frame = 3;
-    this.background.animations.add("idle", [3, 4], 2, true);
-    this.background.animations.play("idle");
     let sprite = this.createTile("tile:coast", frame);
     this.floorContainer.addChild(sprite);
 };
@@ -73,8 +68,8 @@ Tile.prototype.setFilling = function(state) {
 Tile.prototype.setLabel = function(label) {
     this.text = this.game.add.bitmapText(0, 0, 'font:guiOutline', label, (10 * GAME.scale.sprite));
     this.text.anchor.set(0.5, 0.5);
-    this.text.x = this.background.width/2;
-    this.text.y = this.background.height/2 - (3 * GAME.scale.sprite);
+    this.text.x = this.decor.width/2;
+    this.text.y = this.decor.height/2 - (3 * GAME.scale.sprite);
     this.text.originalY = this.text.y;
     this.labelContainer.addChild(this.text);
 };

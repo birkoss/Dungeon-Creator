@@ -10,15 +10,6 @@ function Map(game, config) {
     this.tilesContainer = this.game.add.group();
     this.add(this.tilesContainer);
 
-    this.itemsContainer = this.game.add.group();
-    this.add(this.itemsContainer);
-
-    this.blocksContainer = this.game.add.group();
-    this.add(this.blocksContainer);
-
-    this.onHitTaken = new Phaser.Signal();
-    this.onCoinsTaken = new Phaser.Signal();
-
     this.createMap();
 };
 
@@ -30,10 +21,6 @@ Map.prototype.createMap = function() {
         let rows = [];
         for (let gridX=0; gridX<this.gridWidth + 2; gridX++) {
             let tile = new Tile(this.game);
-            tile.x = gridX * tile.width;
-            tile.y = gridY * tile.height;
-            tile.gridX = gridX;
-            tile.gridY = gridY;
             if (gridX == 0 || gridY == 0 || gridX == (this.gridWidth+1) || gridY == (this.gridHeight+1)) {
                 if (gridX == 0) {
                     if (gridY == 0) {
@@ -62,6 +49,10 @@ Map.prototype.createMap = function() {
                 tile.onSelected.add(this.onTileSelected, this);
                 tile.onConfirmed.add(this.onTileConfirmed, this);
             }
+            tile.x = gridX * tile.width;
+            tile.y = gridY * tile.height;
+            tile.gridX = gridX;
+            tile.gridY = gridY;
             rows.push(tile);
             this.tilesContainer.addChild(tile);
         }

@@ -25,6 +25,16 @@ GAME.Game.prototype = {
         };
 
         this.map = new Map(this.game, mapConfig);
+
+        /* Create a grass background under the map */
+        let background = this.mapContainer.create(0, 0, "tile:ground");
+        background.x = 24 * GAME.scale.sprite;
+        background.y = 24 * GAME.scale.sprite;
+        background.width = this.map.width - (2 * background.x);
+        background.height = this.map.height - (2 * background.y);
+        this.mapContainer.addChild(background);
+
+        /* Add the transparent map on top of the background */
         this.mapContainer.addChild(this.map);
 
         if (this.map.width > this.game.width || this.map.width > this.game.height) {

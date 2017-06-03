@@ -4,9 +4,9 @@ GAME.Game = function() {};
 
 GAME.Game.prototype = {
     create: function() {
+        this.backgroundContainer = this.game.add.group();
         this.mapContainer = this.game.add.group();
         this.buttonsContainer = this.game.add.group();
-
         this.panelContainer = this.game.add.group();
 
         this.createMap();
@@ -24,19 +24,40 @@ GAME.Game.prototype = {
 
         this.map = new Map(this.game, mapConfig);
 
-        /* Create a grass background under the map */
-        let background = this.mapContainer.create(0, 0, "tile:ground");
-        background.x = 24 * GAME.scale.sprite;
-        background.y = 24 * GAME.scale.sprite;
-        background.width = this.map.width - (2 * background.x);
-        background.height = this.map.height - (2 * background.y);
+        /* Create an animated background under the map */
+        let backgroundWidth = Math.max(this.game.width, this.map.width) / GAME.scale.sprite;
+        let backgroundHeight = Math.max(this.game.height, this.map.height) / GAME.scale.sprite;
+        let background = this.game.add.tileSprite(0, 0, backgroundWidth, backgroundHeight, "tile:ground");
+        background.scale.setTo(GAME.scale.sprite, GAME.scale.sprite);
+        background.frame = 3;
+        background.animations.add("idle", [3, 4], 2, true);
+        background.animations.play("idle");
         this.mapContainer.addChild(background);
+
+        /* Create a grass background under the map */
+        let mapBackground = this.mapContainer.create(0, 0, "tile:ground");
+        mapBackground.x = 24 * GAME.scale.sprite;
+        mapBackground.y = 24 * GAME.scale.sprite;
+        mapBackground.width = this.map.width - (2 * mapBackground.x);
+        mapBackground.height = this.map.height - (2 * mapBackground.y);
+        this.mapContainer.addChild(mapBackground);
 
         /* Add the transparent map on top of the background */
         this.mapContainer.addChild(this.map);
 
-        if (this.map.width > this.game.width || this.map.width > this.game.height) {
+        let borderSize = 24 * GAME.scale.sprite;
+        if (this.map.width-(2 * borderSize) > this.game.width || this.map.height-(2 * borderSize) > this.game.height) {
             this.game.input.onDown.add(this.onMapDragStart, this);
+        }
+        if (this.map.width-(2*borderSize) < this.game.width) {
+            let position = (this.game.width-this.map.width)/2;
+            this.map.x += position;
+            mapBackground.x += position;
+        }
+        if (this.map.height < this.game.height) {
+            let position = (this.game.height-this.map.height)/2;
+            this.map.y += position;
+            mapBackground.y += position;
         }
     },
 

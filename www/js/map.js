@@ -10,6 +10,8 @@ function Map(game, config) {
     this.tilesContainer = this.game.add.group();
     this.add(this.tilesContainer);
 
+    this.onCompleted = new Phaser.Signal();
+
     this.createMap();
 };
 
@@ -172,9 +174,7 @@ Map.prototype.onTileConfirmed = function(tile, pointer) {
 };
 
 Map.prototype.mapCleaned = function() {
-    let totalTweens = this.game.tweens.getAll().length;
-
-    if (totalTweens <= 1) {
-        console.log("SHOW OVER...!");
+    if (this.game.tweens.getAll().length <= 1) {
+        this.onCompleted.dispatch(this);
     }
 };

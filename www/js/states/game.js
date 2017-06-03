@@ -23,6 +23,7 @@ GAME.Game.prototype = {
         };
 
         this.map = new Map(this.game, mapConfig);
+        this.map.onCompleted.add(this.onMapCompleted, this);
 
         /* Create an animated background under the map */
         let backgroundWidth = Math.max(this.game.width, this.map.width) / GAME.scale.sprite;
@@ -96,6 +97,33 @@ GAME.Game.prototype = {
         /* Force the map to stay in bounds of the screen */
         this.mapContainer.x = Math.min(0, Math.max(-this.mapContainer.width + this.game.width, this.mapContainer.x));
         this.mapContainer.y = Math.min(0, Math.max(-this.mapContainer.height + this.game.height, this.mapContainer.y));
-    }
+    },
+    onMapCompleted: function() {
+        /* Unlock the next puzzle */
+        let nextPuzzleID = GAME.config.puzzleID + 1;
+        if (nextPuzzleID >= GAME.json["puzzles"][GAME.config.puzzleSize].length ) {
+            nextPuzzleID = 0;
+        }
+        if (nextPuzzleID > 0 && GAME.config.puzzles[GAME.config.puzzleSize].indexOf(nextPuzzleID) == -1) {
+            GAME.config.puzzles[GAME.config.puzzleSize].push(nextPuzzleID);
+            GAME.save();
+        }
 
+        let popup = new Popup(this.game);
+        popup.createOverlay();
+        popup.createTitle("Good job!");
+        if (nextPuzzleID > 0) {
+            popup.addButton("Next", this.onNextPuzzleButtonClicked, this, "btnYellow");
+        }
+        popup.addButton("Back", this.onBackButtonClicked, this, "btnRed");
+
+        popup.generate();
+    },
+    onBackButtonClicked: function() {
+        this.state.start("Level");
+    },
+    onNextPuzzleButtonClicked: function() {
+        GAME.config.puzzleID++;
+        this.state.restart();
+    }
 };

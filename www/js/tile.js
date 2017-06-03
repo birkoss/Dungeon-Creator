@@ -69,10 +69,10 @@ Tile.prototype.setFilling = function(state) {
 };
 
 Tile.prototype.setLabel = function(label) {
-    this.text = this.game.add.bitmapText(0, 0, 'font:guiOutline', label, 20);
+    this.text = this.game.add.bitmapText(0, 0, 'font:guiOutline', label, (10 * GAME.scale.sprite));
     this.text.anchor.set(0.5, 0.5);
     this.text.x = this.background.width/2;
-    this.text.y = this.background.height/2 - 6;
+    this.text.y = this.background.height/2 - (3 * GAME.scale.sprite);
     this.text.originalY = this.text.y;
     this.labelContainer.addChild(this.text);
 };

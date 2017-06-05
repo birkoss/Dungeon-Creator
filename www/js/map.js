@@ -136,8 +136,6 @@ Map.prototype.onTileConfirmed = function(tile, pointer) {
     if (this.selectedTile == tile) {
         tile.setFilling(tile.isFilled ^= 1);
 
-        this.completeMap();
-
         let islandCompleted = true;
         let totalIslandTiles = 0;
         this.config.labels.forEach(function(label) {
